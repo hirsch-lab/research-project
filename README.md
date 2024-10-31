@@ -40,11 +40,7 @@ Some hints for writing maintainable code:
 
 
 
-With this template in place, the automatic logging of context information is 
-
-already implemented. The following snippet demonstrates the output of the
-
-log information:
+With this template in place, the automatic logging of context information is already implemented. The following snippet demonstrates the output of the log information. It also keeps track of uncommitted changes in the repository, and (optional) config files.
 
 
 
