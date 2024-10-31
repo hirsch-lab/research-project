@@ -1,0 +1,18 @@
+# Folders to exclude
+results*/
+build*/
+tmp*/
+**/test-reports/*
+
+# Other special folders
+_context/
+_log/
+_logs/
+_output*/
+
+# Temporary stuff
+*.pyc
+__pycache__/
+
+# PyCharm folder
+.idea
