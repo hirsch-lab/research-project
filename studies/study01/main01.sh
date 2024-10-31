@@ -8,6 +8,8 @@ set -e
 
 OUTDIR="results/new"
 
+STUDY_DIR=$( dirname $(readlink -f $0) )
+
 ################################################################################
 function title(){
     MESSAGE=$1
@@ -25,7 +27,7 @@ STEPNAME="step01"
 mkdir -p "$OUTDIR/$STEPNAME/"
 
 title "STEP 1"
-python "scripts/step01.py" \
+python "$STUDY_DIR/scripts/step01.py" \
         --outDir "$OUTDIR/$STEPNAME/" \
         2>&1 | tee "$OUTDIR/$STEPNAME/console.txt"
 
@@ -37,6 +39,6 @@ STEPNAME="step02"
 mkdir -p "$OUTDIR/$STEPNAME/"
 
 title "STEP 2"
-python "scripts/step02.py" \
+python "$STUDY_DIR/scripts/step02.py" \
         --outDir "$OUTDIR/$STEPNAME/" \
         2>&1 | tee "$OUTDIR/$STEPNAME/console.txt"

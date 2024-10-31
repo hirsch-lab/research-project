@@ -1,6 +1,7 @@
 import logging
 import argparse
 import unittest
+from pathlib import Path
 
 from utilities.logging import loggingConfig
 
@@ -24,10 +25,11 @@ if __name__ == "__main__":
     loggingConfig(level=None,
                   levelFile=logging.DEBUG,
                   outDir=args.logDir)
+    
     loader = unittest.TestLoader()
-    print(args.pattern)
+    src_dir = (Path(__file__).parent / ".." / "src" )
     tests = loader.discover(pattern=args.pattern,
-                            start_dir="../src/utilities")
+                            start_dir=str(src_dir))
     if args.xml:
         # Output must be placed in a folder "test-reports".
         import xmlrunner
