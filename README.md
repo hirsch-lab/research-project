@@ -73,3 +73,35 @@ Notes:
 ...
 ```
 
+
+
+
+
+## Instructions
+
+
+
+Install the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+Make sure to expand the `PYTHONPATH` 
+
+```bash
+# To identify the correct path, you could use the following command
+# echo "$(abspath '.')/src"...
+export PYTHONPATH=$PYTHONPATH:/path/to/src
+```
+
+Then run the main script in study01 and the unit tests:
+
+```bash
+# Run study
+./studies/study01/main01.sh
+
+# Run unittests
+python unittest/run.py
+```
+

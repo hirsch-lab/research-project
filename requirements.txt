@@ -5,5 +5,5 @@ numpy
 matplotlib
 pyyaml
 oyaml
-GitPython==2.1.9            # Required for utilities.ContextInfo
-# xmlrunner==1.7.7            # Required for unit-testing
+GitPython                 # Required for utilities.ContextInfo
+# xmlrunner               # Required for unit-testing
