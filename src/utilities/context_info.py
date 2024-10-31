@@ -11,7 +11,7 @@ from pathlib import Path
 
 from utilities.fileio import ensureDir, ensureCountedPath
 
-_loggerId = 'utils.ctxinfo'
+_loggerId = 'utils'
 
 
 ################################################################################
@@ -55,7 +55,7 @@ def getGitRepo(pathToRepo, logger=None):
     if logger is None:
         logger = logging.getLogger(_loggerId)
     if not pathToRepo:
-        pathToRepo = Path(__file__).parent.parent
+        pathToRepo = Path(__file__).parent.parent.parent
     pathToRepo = Path(pathToRepo)
     if pathToRepo.is_file():
         pathToRepo = pathToRepo.parent
@@ -74,7 +74,7 @@ def getGitRepo(pathToRepo, logger=None):
     # Only if the module is available...
     try:
         repo = Repo(pathToRepo)
-        repoName = 'geomtk.git' # TODO adjust!
+        repoName = os.path.basename(repo.working_dir) + ".git"
     except InvalidGitRepositoryError:
         #logger.warn("This is not a valid repository: %s", pathToRepo)
         repoName = "N/A"
