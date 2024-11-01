@@ -1,8 +1,8 @@
-# Project structure for PhD students
+# Project structure for researchers
 
 
 
-During a PhD, a student might be involved in multiple projects that involve an extensive amount of programming. A reasonable project structure is essential to keep the code organized and maintainable. This here is a template for a project structure that I have found useful in the past.
+A researcher might be involved in multiple studies that involve an extensive amount of programming. A reasonable project structure is essential to keep the code organized and maintainable. This here is a template for a project structure that I have found useful in the past.
 
 
 
