@@ -29,6 +29,7 @@ mkdir -p "$OUTDIR/$STEPNAME/"
 title "STEP 1"
 python "$STUDY_DIR/scripts/step01.py" \
         --outDir "$OUTDIR/$STEPNAME/" \
+        --configsFile "$STUDY_DIR/configs/default_configs.yaml" \
         2>&1 | tee "$OUTDIR/$STEPNAME/console.txt"
 
 
@@ -41,4 +42,5 @@ mkdir -p "$OUTDIR/$STEPNAME/"
 title "STEP 2"
 python "$STUDY_DIR/scripts/step02.py" \
         --outDir "$OUTDIR/$STEPNAME/" \
+        --configsFile "$STUDY_DIR/configs/default_configs.yaml" \
         2>&1 | tee "$OUTDIR/$STEPNAME/console.txt"

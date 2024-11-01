@@ -10,39 +10,34 @@ from utilities.context_info import ContextInfo
 from utilities.data_types import StructContainer
 from utilities.logging import loggingConfig
 from utilities.plotting import saveFigure
+from utilities.fileio import readYAML, writeYAML
+
 
 ################################################################################
-def loadSettings(args):
-    if args.outDir:
-        outDir = Path(args.outDir)
-    else:
-        outDir = Path("..") / "results" / "new"
-
-    # Some configs...
-    configs = StructContainer()
-    configs.outDir = outDir
-    configs.verbose = args.verbose
-    configs.method = args.method
-
-    # Using struct container, it is possible to nest configs.
-    configs.vis = StructContainer()
-    configs.vis.enablePNG = False
-    configs.vis.skipFirst = False
-    configs.plots = StructContainer()
-    configs.plots.bright = "#F9F9F9"
-    configs.plots.dark = "#404040"
-
+def loadConfigs(args):
+    configs_all = readYAML(args.configsFile)
+    configs = configs_all["step01"]
+    configs = StructContainer(configs)
+    
+    # Use the command line arguments to override the matching configs.
+    configs.outDir = args.outDir if args.outDir else configs.outDir
+    configs.outDir = Path(configs.outDir)
+    if not args.save:
+        # Disables saving figures.
+        configs.save_kwargs = {}
     return configs
+
 
 ################################################################################
 def setupIO(configs):
-    # A functor to dump the configs.
-    from utilities.fileio import writeYAML
-    dumpConfigs=lambda filename: writeYAML(filename, configs)
+    # Collect and save some context info.
     info = ContextInfo()
+    # Also dump the configs.
+    dumpConfigs=lambda filename: writeYAML(filename, configs)
     info.addContext("configs.yaml", dumpConfigs)
     info.dump(configs.outDir)
 
+    # Set up logging.
     logLevelMap = {
         0: logging.WARNING,
         1: logging.INFO,
@@ -50,6 +45,7 @@ def setupIO(configs):
     }
     logLevel = logLevelMap.get(configs.verbose, logging.WARNING)
     loggingConfig(outDir=configs.outDir, level=logLevel)
+    
 
 ################################################################################
 def setupMatplotlib():
@@ -59,9 +55,10 @@ def setupMatplotlib():
     mpl.rcParams["pdf.fonttype"] = 42
     #mpl.rcParams["font.sans-serif"] = ["Helvetica", "sans-serif"]
 
+
 ################################################################################
 def run(args):
-    configs = loadSettings(args)
+    configs = loadConfigs(args)
     setupIO(configs)
     setupMatplotlib()
 
@@ -77,17 +74,22 @@ def run(args):
     x = np.sort(x)
     y = x**2
     plt.plot(x, y, "o-")
-    saveFigure(fig=fig, path=Path(args.outDir) / "plot.pdf" )
+    
+    if configs.save_kwargs:
+        fileName = ("plot" + ".", configs.save_kwargs.format)
+        filePath = Path(configs.outDir) / fileName
+        saveFigure(fig=fig, path=filePath, **configs.save_kwargs)
 
 
 ################################################################################
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--method", type=str, default="methodA",
-                        choices=["methodA","methodB"],
-                        help="Choose your favorite method.")
+    parser.add_argument("--save", action="store_true",
+                        help="Enable saving figures.")
     parser.add_argument("--outDir", type=str, default=None,
                         help="Output directory.")
+    parser.add_argument("--configsFile", type=str, default=None,
+                        help="Path to the configs file.")
     parser.add_argument("-v", "--verbose", action="count", 
                         help="Increase verbosity level.")
     args = parser.parse_args()

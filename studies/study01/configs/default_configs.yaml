@@ -1,0 +1,29 @@
+###############################################################################
+# DEFAULT CONFIGS
+###############################################################################
+# Note: The config parameters of the different steps can be overridden
+#       using command line arguments for the different scripts. That 
+#       way, one can 
+
+
+###############################################################################
+# Configuration parameters for step01.
+step01:
+  dataDir: path/to/data
+  outDir: path/to/output
+  verbose: 1
+  method: methodA
+
+###############################################################################
+# Configuration parameters for step02.
+step02:
+  dataDir: path/to/data
+  outDir: path/to/output
+  verbose: 2
+  save_kwargs:
+    format: "pdf"
+    transparent: True
+    dpi: 300
+  plots:
+    bright: '#F9F9F9'
+    dark: '#404040'
