@@ -5,5 +5,6 @@ numpy
 matplotlib
 pyyaml
 oyaml
+# pipreqs                   # Required for utilities.ContextInfo
 GitPython                 # Required for utilities.ContextInfo
-# xmlrunner               # Required for unit-testing
+xmlrunner                 # Required for unit-testing

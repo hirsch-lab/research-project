@@ -6,6 +6,7 @@ import logging
 import datetime
 import warnings
 import platform  # system information
+import subprocess
 import multiprocessing # cpu_count()
 from pathlib import Path
 
@@ -15,11 +16,14 @@ _loggerId = 'utils'
 
 
 ################################################################################
-def inferAppName(stackDepth=2):
+def inferAppName(stackDepth=2, returnPath=False):
     stackDepth = -1 if stackDepth is None else stackDepth
     caller = inspect.getframeinfo(inspect.stack()[stackDepth][0])
-    appId = Path(caller.filename).stem
-    return appId
+    appPath = Path(caller.filename)
+    if returnPath:
+        return appPath
+    else: 
+        return appPath.stem
 
 ################################################################################
 # Template text (not in a separate file to avoid an additional dependency):
@@ -201,16 +205,55 @@ class ContextInfo:
             msg = "Failed to create output directory: %s" % outDir
             self.logger.error(msg)
             return
+
         try:
             infoFile = self._ensureFilename(Path(outDir) / "info.txt")
-            diffFile = self._ensureFilename(Path(outDir) / "local.diff")
-            if self.repo:
-                with open(diffFile,'wb') as fid:
-                    t = self.repo.head.commit.tree
-                    fid.write(self.repo.git.diff(t).encode('utf-8').strip())
             with open(infoFile, 'w') as fid:
                 fid.write(self.info)
         except Exception as ex:
             self.logger.exception("Failed to dump context info.")
-            return
+
+        try:
+            if self.repo:
+                diffFile = self._ensureFilename(Path(outDir) / "local.diff")
+                with open(diffFile,'wb') as fid:
+                    t = self.repo.head.commit.tree
+                    fid.write(self.repo.git.diff(t).encode('utf-8').strip())
+        except Exception as ex:
+            self.logger.exception("Failed to dump diff file.")
+
+        try:
+            # Dump requirements.txt and environment.txt
+            
+            # pipreqs is currently not available:
+            # https://github.com/bndr/pipreqs/issues/434
+            # My bet is that it has something to do with pyenv...
+            # Run a shell command to dump the requirements.txt.
+            
+            if False:
+                # Print current wokring directory
+                requirementsFile = Path(outDir) / "requirements.txt"
+                requirementsFile = self._ensureFilename(requirementsFile)
+                
+                pathToRepo = Path(__file__).parent.parent.parent
+                cmd = "pipreqs %s --savepath=%s --use-local" % (pathToRepo, 
+                                                                requirementsFile)
+                logger = logging.getLogger()
+                logger.disabled = True
+                subprocess.run(cmd, shell=True, check=True,
+                            stdout=subprocess.DEVNULL,   # Silence output 
+                            stderr=subprocess.DEVNULL)   # Silence output
+                logger.disabled = False
+
+            # Dump the entire environment (pip freeze)
+            environmentFile = Path(outDir) / "environment.txt"
+            environmentFile = self._ensureFilename(environmentFile.resolve())
+                        
+            cmd = "python -m pip freeze > %s" % environmentFile
+            subprocess.run(cmd, shell=True, check=True,)
+                           #stdout=subprocess.DEVNULL,   # Silence output 
+                           #stderr=subprocess.DEVNULL)   # Silence output
+        except Exception as ex:
+            self.logger.exception("Failed to dump requirements.txt.")
+
         self._dumpExtraContext(outDir)
